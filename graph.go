@@ -106,6 +106,11 @@ func (s *Service) Create(name string, dependsOn []string) (*Task, error) {
 		return nil, badRequest("task name must not contain '/'")
 	}
 	deps := dedupStrings(dependsOn)
+	for _, d := range deps {
+		if strings.Contains(d, "/") {
+			return nil, badRequest("dependency name %q must not contain '/'", d)
+		}
+	}
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
